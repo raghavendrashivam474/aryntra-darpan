@@ -8,7 +8,12 @@
 
 **Aryntra Darpan** (दर्पण — *mirror / reflection*) is a native Android utility built using **Kotlin** and **Jetpack Compose**. It serves as an introspective lens into the underlying Android operating system, device hardware, battery state, connectivity, and storage environment.
 
-This project has successfully completed **Sprint S3 (Core Device & OS Inspection)**, replacing the S2 mock device data with real hardware and OS information fetched from the native Android SDK Build APIs through a decoupled provider layer.
+This project has completed **Sprint S4 (Battery & Storage Inspection)**. The dashboard renders real native metrics:
+- **Device & OS**: Hardware identity and Android release via Build APIs
+- **Battery**: Real-time percentage, charging state, and power status via BatteryManager
+- **Storage**: Real filesystem capacity, used space, and free space via StatFs
+- **Network**: Intentionally mocked (scheduled for S5)
+- **Snapshot History**: Point-in-time in-memory state captures (persistence in S6)
 
 This project is also designed as an idiomatic, clean Kotlin/Android learning foundation focusing directly on modern Android SDK APIs without extraneous third-party abstractions.
 
@@ -85,12 +90,17 @@ adb shell am start -n "com.aryntra.darpan/com.aryntra.darpan.MainActivity"
 ## Project Structure
 ```text
 aryntra-darpan/
-│
 ├── app/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/aryntra/darpan/
 │   │   │   │   ├── MainActivity.kt
+│   │   │   │   ├── battery/
+│   │   │   │   │   └── BatteryInfoProvider.kt
+│   │   │   │   ├── device/
+│   │   │   │   │   └── DeviceInfoProvider.kt
+│   │   │   │   ├── storage/
+│   │   │   │   │   └── StorageInfoProvider.kt
 │   │   │   │   └── ui/
 │   │   │   │       ├── DarpanDashboard.kt
 │   │   │   │       └── DashboardComponents.kt
@@ -100,23 +110,29 @@ aryntra-darpan/
 │   │   │   │       └── themes.xml
 │   │   │   └── AndroidManifest.xml
 │   │   ├── test/
+│   │   │   └── java/com/aryntra/darpan/
+│   │   │       ├── battery/
+│   │   │       │   └── BatteryInfoProviderTest.kt
+│   │   │       ├── device/
+│   │   │       │   └── DeviceInfoProviderTest.kt
+│   │   │       └── storage/
+│   │   │           └── StorageInfoProviderTest.kt
 │   │   └── androidTest/
 │   ├── build.gradle.kts
 │   └── proguard-rules.pro
 │
 ├── docs/
-│   └── architecture.md
-│
-├── screenshots/
-│   └── s0-baseline.png
+│   ├── architecture.md
+│   └── sprints/
+│       ├── s3/
+│       └── s4/
+│           ├── post_completion_report.md
+│           └── s4_device_verification.png
 │
 ├── gradle/
 │   ├── wrapper/
-│   │   ├── gradle-wrapper.jar
-│   │   └── gradle-wrapper.properties
 │   └── libs.versions.toml
 │
-├── .gitignore
 ├── build.gradle.kts
 ├── settings.gradle.kts
 ├── gradle.properties
@@ -128,20 +144,17 @@ aryntra-darpan/
 
 ## Development Roadmap
 
-# Development Roadmap
-
-*   [x] **Sprint S0 — Foundation Baseline (v0.0.0)**
-    *   Clean Kotlin + Jetpack Compose project bootstrap
-    *   Reproducible Gradle build workflow
-    *   Device deployment and verification baseline
-*   [x] **Sprint S1 — Kotlin & Activity Lifecycle**
-    *   Activity lifecycle logging & state handling
-    *   Idiomatic Kotlin data models
-*   [x] **Sprint S2 — Compose Dashboard & Information Architecture**
+*   [x] **Sprint S0 — Foundation Baseline (`v0.0.0`)**
+    *   Clean Kotlin + Jetpack Compose project bootstrap & Gradle verification
+*   [x] **Sprint S1 — Kotlin & Activity Lifecycle (`v0.1.0`)**
+    *   Activity lifecycle logging, state hoisting, and foundational domain model
+*   [x] **Sprint S2 — Compose Dashboard & Information Architecture (`v0.2.0`)**
     *   Structured Darpan dashboard with decomposed Compose UI components
-*   [x] **Sprint S3 — Power & Battery Diagnostics**
-    *   `BatteryManager` broadcast receiver and charge status
-*   [x] **Sprint S4 — Storage & Memory Diagnostics**
-    *   Internal/external storage stats and RAM breakdown
-*   [x] **Sprint S5 — Network & Connectivity State**
+*   [x] **Sprint S3 — Core Device & OS Inspection (`v0.3.0`)**
+    *   Native Android `Build` API integration via `DeviceInfoProvider`
+*   [x] **Sprint S4 — Battery & Storage Inspection (`v0.4.0`)**
+    *   Real-time `BatteryManager` broadcast intent and `StatFs` filesystem metrics
+*   [ ] **Sprint S5 — Network & Connectivity State (`v0.5.0`)**
     *   `ConnectivityManager` and network capability reporting
+*   [ ] **Sprint S6 — Local Persistence & Snapshots (`v0.6.0`)**
+    *   Offline snapshot persistence and historical review

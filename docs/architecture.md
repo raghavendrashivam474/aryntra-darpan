@@ -108,3 +108,44 @@ DarpanDashboard (Hoisted State)
        ▼
 DeviceCard (Pure Material 3 Presentation)
 ```
+
+## 7. Sprint S4 Updates (Battery & Storage Inspection)
+
+Sprint S4 connects real Android platform telemetry for the Battery and Storage cards, removing mock state cycles while preserving pure UI state hoisting:
+
+### 7.1 Battery Provider (`battery/BatteryInfoProvider.kt`)
+- **Broadcast Interception**: Queries the Android OS sticky intent `Intent.ACTION_BATTERY_CHANGED` via application `Context` without retaining long-lived receiver references or leaking Activity contexts.
+- **Metric Derivations**: Computes accurate `levelPercentage` using `BatteryManager.EXTRA_LEVEL` and `BatteryManager.EXTRA_SCALE`.
+- **Charging State Mapping**: Normalizes `BatteryManager.EXTRA_STATUS` into human-readable strings (`"Charging"`, `"Discharging"`, `"Full"`, `"Not charging"`) and assigns the `isCharging` boolean flag.
+- **Resilience**: Enforces safe bound-checks (`0..100%`) and encapsulates system service exceptions with fallback UI states to prevent application crashes on custom ROMs or emulators.
+
+### 7.2 Storage Provider (`storage/StorageInfoProvider.kt`)
+- **Filesystem Inspection**: Queries user-accessible storage partitions via `StatFs` using `Environment.getDataDirectory()`.
+- **64-bit Capacity Arithmetic**: Uses `blockCountLong` and `blockSizeLong` (64-bit longs) to avoid integer overflow issues common with large modern storage volumes (>2GB/4GB boundaries).
+- **Unit Normalization**: Computes `totalStorageGb`, `usedStorageGb`, and `availableStorageGb` using binary Gigabyte definitions (`1024^3` bytes), guaranteeing non-negative values and safe fraction denominators.
+
+### 7.3 Data Flow Pipeline (Sprint S4 State)
+```text
+                    Android System
+                         │
+          ┌──────────────┼──────────────┐
+          │              │              │
+        Build       Battery APIs      StatFs
+          │              │              │
+          ▼              ▼              ▼
+   DeviceInfoProvider  BatteryInfoProvider  StorageInfoProvider
+          │              │              │
+          ▼              ▼              ▼
+    DeviceUiState   BatteryUiState   StorageUiState
+          │              │              │
+          └──────────────┼──────────────┘
+                         ▼
+                  DarpanDashboard
+                         │
+              ┌──────────┼──────────┐
+              ▼          ▼          ▼
+          DeviceCard BatteryCard StorageCard
+                         │
+                         ▼
+                    Compose UI
+```
