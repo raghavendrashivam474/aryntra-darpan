@@ -1,4 +1,4 @@
-# Architecture Baseline — Aryntra Darpan
+﻿# Architecture Baseline — Aryntra Darpan
 
 ## 1. Overview
 
@@ -48,3 +48,21 @@ The following architectural components are intentionally deferred to future spri
 - State Holders / ViewModels: Will be introduced when dynamic system data streams are integrated.
 - Provider Layer: Direct native SDK API wrappers for Build, BatteryManager, StorageStatsManager, and ConnectivityManager.
 - Local Persistence: Snapshot caching mechanism.
+
+## 4. Sprint S1 Updates (Kotlin, Lifecycle & Context Foundation)
+
+In Sprint S1, the application architecture was expanded to establish practical native Android runtime patterns:
+
+### 4.1 Activity Lifecycle Observation & UI State Bridge
+MainActivity intercepts system lifecycle callbacks (onCreate, onStart, onResume, onPause, onStop, onDestroy) and bridges these events to Jetpack Compose using an observable state field (currentLifecycleState). This demonstrates how the Android OS manages component lifecycles and drives reactive UI updates.
+
+### 4.2 Android Context Bridge
+Using LocalContext.current within the Compose tree, the app retrieves active environment properties:
+- Package Name (context.packageName)
+- Application Label (context.applicationInfo.loadLabel(...))
+
+This provides a direct gateway to platform APIs without introducing premature abstractions.
+
+### 4.3 Compose State & Kotlin Domain Model
+- **DeviceSnapshot Data Class**: Demonstrates Kotlin's immutable properties (al) and nullable types (String?) utilizing the safe elvis operator (?:) fallback.
+- **Unidirectional State Flow**: Click interactions mutate a state-backed snapshot, triggering immediate atomic recomposition.

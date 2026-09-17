@@ -1,4 +1,4 @@
-# Aryntra Darpan (दर्पण)
+﻿# Aryntra Darpan (दर्पण)
 
 > A lightweight native Android utility that exposes structured diagnostic and environment insights about the host device.
 
@@ -7,6 +7,8 @@
 ## Overview
 
 **Aryntra Darpan** (दर्पण — *mirror / reflection*) is a native Android utility built using **Kotlin** and **Jetpack Compose**. It serves as an introspective lens into the underlying Android operating system, device hardware, battery state, connectivity, and storage environment.
+
+This project has successfully completed **Sprint S1 (Kotlin Fundamentals, Activity Lifecycle & Context)**, adding interactive native state telemetry, lifecycle logging, and context exploration.
 
 This project is also designed as an idiomatic, clean Kotlin/Android learning foundation focusing directly on modern Android SDK APIs without extraneous third-party abstractions.
 
