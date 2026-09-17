@@ -8,11 +8,11 @@
 
 **Aryntra Darpan** (दर्पण — *mirror / reflection*) is a native Android utility built using **Kotlin** and **Jetpack Compose**. It serves as an introspective lens into the underlying Android operating system, device hardware, battery state, connectivity, and storage environment.
 
-This project has completed **Sprint S4 (Battery & Storage Inspection)**. The dashboard renders real native metrics:
+This project has completed **Sprint S5 (Network & Connectivity Inspection)**. The dashboard renders real native metrics:
 - **Device & OS**: Hardware identity and Android release via Build APIs
 - **Battery**: Real-time percentage, charging state, and power status via BatteryManager
 - **Storage**: Real filesystem capacity, used space, and free space via StatFs
-- **Network**: Intentionally mocked (scheduled for S5)
+- **Network**: Real-time network transport (Wi-Fi, Cellular, Ethernet) and capability validation via ConnectivityManager
 - **Snapshot History**: Point-in-time in-memory state captures (persistence in S6)
 
 This project is also designed as an idiomatic, clean Kotlin/Android learning foundation focusing directly on modern Android SDK APIs without extraneous third-party abstractions.
@@ -99,6 +99,8 @@ aryntra-darpan/
 │   │   │   │   │   └── BatteryInfoProvider.kt
 │   │   │   │   ├── device/
 │   │   │   │   │   └── DeviceInfoProvider.kt
+│   │   │   │   ├── network/
+│   │   │   │   │   └── NetworkInfoProvider.kt
 │   │   │   │   ├── storage/
 │   │   │   │   │   └── StorageInfoProvider.kt
 │   │   │   │   └── ui/
@@ -115,6 +117,8 @@ aryntra-darpan/
 │   │   │       │   └── BatteryInfoProviderTest.kt
 │   │   │       ├── device/
 │   │   │       │   └── DeviceInfoProviderTest.kt
+│   │   │       ├── network/
+│   │   │       │   └── NetworkInfoProviderTest.kt
 │   │   │       └── storage/
 │   │   │           └── StorageInfoProviderTest.kt
 │   │   └── androidTest/
@@ -128,6 +132,8 @@ aryntra-darpan/
 │       └── s4/
 │           ├── post_completion_report.md
 │           └── s4_device_verification.png
+│       └── s5/
+│           └── post_completion_report.md
 │
 ├── gradle/
 │   ├── wrapper/
@@ -154,7 +160,7 @@ aryntra-darpan/
     *   Native Android `Build` API integration via `DeviceInfoProvider`
 *   [x] **Sprint S4 — Battery & Storage Inspection (`v0.4.0`)**
     *   Real-time `BatteryManager` broadcast intent and `StatFs` filesystem metrics
-*   [ ] **Sprint S5 — Network & Connectivity State (`v0.5.0`)**
+*   [x] **Sprint S5 — Network & Connectivity State (`v0.5.0`)**
     *   `ConnectivityManager` and network capability reporting
-*   [ ] **Sprint S6 — Local Persistence & Snapshots (`v0.6.0`)**
+*   [x] **Sprint S6 — Local Persistence & Snapshots (0.6.0)**
     *   Offline snapshot persistence and historical review

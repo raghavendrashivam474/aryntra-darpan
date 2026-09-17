@@ -149,3 +149,43 @@ Sprint S4 connects real Android platform telemetry for the Battery and Storage c
                          ▼
                     Compose UI
 ```
+
+## 8. Sprint S5 Updates (Network & Connectivity Inspection)
+
+Sprint S5 replaces the mock network state with live Android platform connectivity reporting using `ConnectivityManager` and `NetworkCapabilities`:
+
+### 8.1 Network Provider (`network/NetworkInfoProvider.kt`)
+- **System Service Access**: Queries `Context.CONNECTIVITY_SERVICE` via safe application `Context` (`context.applicationContext`) to prevent leaking Activity references.
+- **Active Network Resolution**: Retrieves the active network handle via `connectivityManager.activeNetwork` and inspects `connectivityManager.getNetworkCapabilities(...)`.
+- **Capability Inspection**: Checks `NetworkCapabilities.NET_CAPABILITY_INTERNET` for internet connectivity and `NetworkCapabilities.NET_CAPABILITY_VALIDATED` for validated internet access.
+- **Transport Identification**: Maps framework transports (`TRANSPORT_WIFI`, `TRANSPORT_CELLULAR`, `TRANSPORT_ETHERNET`, `TRANSPORT_BLUETOOTH`, `TRANSPORT_VPN`) to readable interface names.
+- **Resilience & Fallbacks**: Gracefully handles disconnected/airplane mode state (returning `connectionType = "None"` / `statusText = "Disconnected"`) and encapsulates system exceptions.
+
+### 8.2 Permission Architecture
+- **Normal Permission**: Declares `android.permission.ACCESS_NETWORK_STATE` in `AndroidManifest.xml`.
+- **No Runtime Dialog**: This is an install-time normal permission granted automatically by the OS; no runtime permission requests or complex managers are required.
+
+### 8.3 Data Flow Pipeline (Sprint S5 State)
+```text
+                    Android System
+                         │
+          ┌──────────────┼──────────────┬──────────────┐
+          │              │              │              │
+        Build       Battery APIs      StatFs      Connectivity
+          │              │              │              │
+          ▼              ▼              ▼              ▼
+   DeviceInfoProvider  BatteryInfoProvider  StorageInfoProvider  NetworkInfoProvider
+          │              │              │              │
+          ▼              ▼              ▼              ▼
+    DeviceUiState   BatteryUiState   StorageUiState   NetworkUiState
+          │              │              │              │
+          └──────────────┼──────────────┴──────────────┘
+                         ▼
+                  DarpanDashboard
+                         │
+              ┌──────────┼──────────┬──────────┐
+              ▼          ▼          ▼          ▼
+          DeviceCard BatteryCard StorageCard NetworkCard
+                         │
+                         ▼
+                    Compose UI
