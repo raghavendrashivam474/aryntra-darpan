@@ -1,7 +1,6 @@
-﻿package com.aryntra.darpan.ui
+package com.aryntra.darpan.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,18 +28,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aryntra.darpan.DeviceSnapshot
+import com.aryntra.darpan.device.DeviceInfoProvider
 
 /**
- * S2 Darpan Dashboard: Primary structured dashboard surface.
- * Demonstrates state hoisting, LazyColumn scrolling, and composable decomposition.
+ * S3 Darpan Dashboard: Primary structured dashboard surface.
+ * Consumes native device state from [DeviceInfoProvider] while maintaining
+ * pure UI state hoisting for card composables.
  */
 @Composable
 fun DarpanDashboard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    deviceInfoProvider: DeviceInfoProvider = remember { DeviceInfoProvider() }
 ) {
-    // S2 Dashboard State (Mocked data models hoisted to parent container)
     var refreshSequence by remember { mutableIntStateOf(0) }
-    var deviceState by remember { mutableStateOf(DeviceUiState()) }
+
+    // S3: Real Device state populated from Android SDK Build APIs
+    var deviceState by remember { mutableStateOf(deviceInfoProvider.getDeviceInfo()) }
+
+    // S2 Mock states (scheduled for S4 & S5 real data transitions)
     var batteryState by remember { mutableStateOf(BatteryUiState()) }
     var storageState by remember { mutableStateOf(StorageUiState()) }
     var networkState by remember { mutableStateOf(NetworkUiState()) }
@@ -49,8 +54,8 @@ fun DarpanDashboard(
     val snapshotHistory = remember {
         mutableStateListOf(
             DeviceSnapshot(
-                timestamp = System.currentTimeMillis() - 120000L,
-                sampleLabel = "Baseline Sync",
+                timestamp = System.currentTimeMillis(),
+                sampleLabel = "Initial System Baseline",
                 sequenceNumber = 1
             )
         )
@@ -65,7 +70,7 @@ fun DarpanDashboard(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // S2.1 Header item: Identity & Subtitle
+            // Header item: Identity & Subtitle + Refresh Action
             item {
                 Column(
                     modifier = Modifier
@@ -94,6 +99,9 @@ fun DarpanDashboard(
                         Button(
                             onClick = {
                                 refreshSequence++
+                                // Re-query native device state
+                                deviceState = deviceInfoProvider.getDeviceInfo()
+
                                 // Cycle mock states slightly to illustrate recomposition feedback
                                 val mockBatteryLevels = listOf(82, 81, 80, 83)
                                 val currentMockLevel = mockBatteryLevels[refreshSequence % mockBatteryLevels.size]
@@ -121,7 +129,7 @@ fun DarpanDashboard(
                 }
             }
 
-            // S2.3 Device Section
+            // S3 Device Section (Populated with real Android Build data)
             item {
                 DeviceCard(state = deviceState)
             }
@@ -141,12 +149,12 @@ fun DarpanDashboard(
                 NetworkCard(state = networkState)
             }
 
-            // S2.7 & S2.19 Snapshot History Section
+            // S2.7 Snapshot History Section
             item {
                 SnapshotHistorySection(snapshots = snapshotHistory)
             }
 
-            // Bottom Spacing for clean edge padding
+            // Bottom Spacing
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }

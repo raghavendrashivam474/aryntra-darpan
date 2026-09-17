@@ -1,4 +1,4 @@
-﻿package com.aryntra.darpan.ui
+package com.aryntra.darpan.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,12 +26,13 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * UI State representations for Dashboard cards (Mock/Synthetic for S2).
+ * UI State representations for Dashboard cards.
+ * S3: DeviceUiState represents real device/OS inspection data.
  */
 data class DeviceUiState(
-    val deviceName: String = "Pixel 9",
-    val manufacturer: String = "Google",
-    val androidVersion: String = "Android 16"
+    val deviceName: String = "Unknown Device",
+    val manufacturer: String = "Unknown",
+    val androidVersion: String = "Unknown"
 )
 
 data class BatteryUiState(
@@ -124,7 +125,7 @@ fun MetricRow(
 }
 
 /**
- * S2.3 Device Information Section
+ * S2.3 & S3 Device Information Section
  */
 @Composable
 fun DeviceCard(
@@ -141,7 +142,7 @@ fun DeviceCard(
 }
 
 /**
- * S2.4 Battery State Section
+ * S2.4 Battery State Section (Mocked in S3, real in S4)
  */
 @Composable
 fun BatteryCard(
@@ -181,7 +182,7 @@ fun BatteryCard(
 }
 
 /**
- * S2.5 Storage Section
+ * S2.5 Storage Section (Mocked in S3, real in S4)
  */
 @Composable
 fun StorageCard(
@@ -221,7 +222,7 @@ fun StorageCard(
 }
 
 /**
- * S2.6 Network Section
+ * S2.6 Network Section (Mocked in S3, real in S5)
  */
 @Composable
 fun NetworkCard(
@@ -277,7 +278,7 @@ fun SnapshotRow(
 }
 
 /**
- * S2.7 & S2.19 Snapshot History Card (with empty state handling)
+ * S2.7 Snapshot History Card (with empty state handling)
  */
 @Composable
 fun SnapshotHistorySection(
