@@ -8,7 +8,7 @@
 
 **Aryntra Darpan** (दर्पण — *mirror / reflection*) is a native Android utility built using **Kotlin** and **Jetpack Compose**. It serves as an introspective lens into the underlying Android operating system, device hardware, battery state, connectivity, and storage environment.
 
-This project has successfully completed **Sprint S1 (Kotlin Fundamentals, Activity Lifecycle & Context)**, adding interactive native state telemetry, lifecycle logging, and context exploration.
+This project has successfully completed **Sprint S2 (Compose Dashboard Layout & Structured Information Architecture)**, transforming the S1 learning surface into a structured Darpan dashboard with decomposed Compose UI components, state hoisting, and mock device environment sections.
 
 This project is also designed as an idiomatic, clean Kotlin/Android learning foundation focusing directly on modern Android SDK APIs without extraneous third-party abstractions.
 
@@ -90,7 +90,10 @@ aryntra-darpan/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/aryntra/darpan/
-│   │   │   │   └── MainActivity.kt
+│   │   │   │   ├── MainActivity.kt
+│   │   │   │   └── ui/
+│   │   │   │       ├── DarpanDashboard.kt
+│   │   │   │       └── DashboardComponents.kt
 │   │   │   ├── res/
 │   │   │   │   └── values/
 │   │   │   │       ├── strings.xml
@@ -134,8 +137,8 @@ aryntra-darpan/
 *   [x] **Sprint S1 — Kotlin & Activity Lifecycle**
     *   Activity lifecycle logging & state handling
     *   Idiomatic Kotlin data models
-*   [x] **Sprint S2 — Core Device & OS Inspection**
-    *   `Build`, `VERSION`, and system property inspection
+*   [x] **Sprint S2 — Compose Dashboard & Information Architecture**
+    *   Structured Darpan dashboard with decomposed Compose UI components
 *   [x] **Sprint S3 — Power & Battery Diagnostics**
     *   `BatteryManager` broadcast receiver and charge status
 *   [x] **Sprint S4 — Storage & Memory Diagnostics**
