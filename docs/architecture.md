@@ -189,3 +189,25 @@ Sprint S5 replaces the mock network state with live Android platform connectivit
                          │
                          ▼
                     Compose UI
+```
+## 9. Sprint S6 Updates (Local Persistence & Snapshot Architecture)
+
+### 9.1 Hybrid State Architecture (RAM + SQLite)
+S6 introduces a strict dual-path state model:
+- **Live Path (Hot State)**: Providers query Android SDK APIs and update Compose state directly in RAM. Zero database round-trips for live rendering.
+- **Persistence Path (Cold State)**: Point-in-time observations are captured as immutable DeviceSnapshot instances and written asynchronously to the app-private Room database via Dispatchers.IO.
+
+### 9.2 Persistence Boundary (SnapshotStore)
+The domain layer uses an abstraction interface, not Room DAOs directly:
+- save(snapshot) - persist a new observation
+- getRecent(limit) - retrieve newest N snapshots
+- getAll() / getCount() / clear() - lifecycle management
+
+### 9.3 Database Implementation (persistence/)
+- SnapshotEntity: Room entity with bidirectional domain mapping
+- SnapshotDao: Parameterized SQL with ORDER BY and LIMIT
+- DarpanDatabase: Thread-safe singleton (darpan.db)
+- RoomSnapshotStore: Dispatchers.IO execution with crash isolation
+
+### 9.4 Crash Isolation Guarantee
+Database failures are caught and logged at the store boundary. Live telemetry remains fully operational even if persistence is unavailable.

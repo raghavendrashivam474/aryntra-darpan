@@ -13,7 +13,7 @@ This project has completed **Sprint S5 (Network & Connectivity Inspection)**. Th
 - **Battery**: Real-time percentage, charging state, and power status via BatteryManager
 - **Storage**: Real filesystem capacity, used space, and free space via StatFs
 - **Network**: Real-time network transport (Wi-Fi, Cellular, Ethernet) and capability validation via ConnectivityManager
-- **Snapshot History**: Point-in-time in-memory state captures (persistence in S6)
+- **Snapshot History**: Persistent point-in-time device observations stored in local SQLite via Room (S6)
 
 This project is also designed as an idiomatic, clean Kotlin/Android learning foundation focusing directly on modern Android SDK APIs without extraneous third-party abstractions.
 
@@ -40,6 +40,8 @@ This project is also designed as an idiomatic, clean Kotlin/Android learning fou
 | **Target SDK** | API 35 (Android 15) |
 | **Minimum SDK** | API 26 (Android 8.0 Oreo) |
 | **JDK** | OpenJDK 21 (bundled with Android Studio) |
+| **Local Database** | Room `2.6.1` (SQLite) |
+| **Annotation Processing** | KSP `2.0.21-1.0.28` |
 | **Package Name** | `com.aryntra.darpan` |
 
 ---
@@ -101,6 +103,14 @@ aryntra-darpan/
 │   │   │   │   │   └── DeviceInfoProvider.kt
 │   │   │   │   ├── network/
 │   │   │   │   │   └── NetworkInfoProvider.kt
+│   │   │   │   ├── snapshot/
+│   │   │   │   │   ├── DeviceSnapshot.kt
+│   │   │   │   │   └── SnapshotStore.kt
+│   │   │   │   ├── persistence/
+│   │   │   │   │   ├── DarpanDatabase.kt
+│   │   │   │   │   ├── SnapshotEntity.kt
+│   │   │   │   │   ├── SnapshotDao.kt
+│   │   │   │   │   └── RoomSnapshotStore.kt
 │   │   │   │   ├── storage/
 │   │   │   │   │   └── StorageInfoProvider.kt
 │   │   │   │   └── ui/
@@ -119,6 +129,8 @@ aryntra-darpan/
 │   │   │       │   └── DeviceInfoProviderTest.kt
 │   │   │       ├── network/
 │   │   │       │   └── NetworkInfoProviderTest.kt
+│   │   │       ├── persistence/
+│   │   │       │   └── SnapshotMappingTest.kt
 │   │   │       └── storage/
 │   │   │           └── StorageInfoProviderTest.kt
 │   │   └── androidTest/
@@ -162,5 +174,5 @@ aryntra-darpan/
     *   Real-time `BatteryManager` broadcast intent and `StatFs` filesystem metrics
 *   [x] **Sprint S5 — Network & Connectivity State (`v0.5.0`)**
     *   `ConnectivityManager` and network capability reporting
-*   [x] **Sprint S6 — Local Persistence & Snapshots (0.6.0)**
-    *   Offline snapshot persistence and historical review
+*   [x] **Sprint S6 — Local Persistence & Snapshot Architecture (0.6.0)**
+    *   Room-backed SQLite persistence with hybrid RAM + disk state architecture
