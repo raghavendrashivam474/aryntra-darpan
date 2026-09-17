@@ -31,34 +31,38 @@ import androidx.compose.ui.unit.sp
 import com.aryntra.darpan.DeviceSnapshot
 import com.aryntra.darpan.battery.BatteryInfoProvider
 import com.aryntra.darpan.device.DeviceInfoProvider
+import com.aryntra.darpan.network.NetworkInfoProvider
 import com.aryntra.darpan.storage.StorageInfoProvider
 
 /**
- * S4 Darpan Dashboard: Primary structured dashboard surface.
+ * S5 Darpan Dashboard: Primary structured dashboard surface.
  * Consumes real native state from [DeviceInfoProvider], [BatteryInfoProvider],
- * and [StorageInfoProvider] while maintaining pure UI state hoisting for card composables.
+ * [StorageInfoProvider], and [NetworkInfoProvider] while maintaining pure UI state hoisting
+ * for card composables.
  */
 @Composable
 fun DarpanDashboard(
     modifier: Modifier = Modifier,
     deviceInfoProvider: DeviceInfoProvider = remember { DeviceInfoProvider() },
     storageInfoProvider: StorageInfoProvider = remember { StorageInfoProvider() },
-    batteryInfoProvider: BatteryInfoProvider? = null
+    batteryInfoProvider: BatteryInfoProvider? = null,
+    networkInfoProvider: NetworkInfoProvider? = null
 ) {
     val context = LocalContext.current.applicationContext
     val resolvedBatteryProvider = remember(batteryInfoProvider, context) {
         batteryInfoProvider ?: BatteryInfoProvider(context)
     }
+    val resolvedNetworkProvider = remember(networkInfoProvider, context) {
+        networkInfoProvider ?: NetworkInfoProvider(context)
+    }
 
     var refreshSequence by remember { mutableIntStateOf(0) }
 
-    // S3 & S4: Real native state populated from Android SDK APIs
+    // S3, S4 & S5: Real native state populated from Android SDK APIs
     var deviceState by remember { mutableStateOf(deviceInfoProvider.getDeviceInfo()) }
     var batteryState by remember { mutableStateOf(resolvedBatteryProvider.getBatteryInfo()) }
     var storageState by remember { mutableStateOf(storageInfoProvider.getStorageInfo()) }
-
-    // S2 Mock state (scheduled for S5 real data transition)
-    var networkState by remember { mutableStateOf(NetworkUiState()) }
+    var networkState by remember { mutableStateOf(resolvedNetworkProvider.getNetworkInfo()) }
 
     // Snapshot history state list
     val snapshotHistory = remember {
@@ -113,6 +117,7 @@ fun DarpanDashboard(
                                 deviceState = deviceInfoProvider.getDeviceInfo()
                                 batteryState = resolvedBatteryProvider.getBatteryInfo()
                                 storageState = storageInfoProvider.getStorageInfo()
+                                networkState = resolvedNetworkProvider.getNetworkInfo()
 
                                 val newSnapshot = DeviceSnapshot(
                                     timestamp = System.currentTimeMillis(),
@@ -151,7 +156,7 @@ fun DarpanDashboard(
                 StorageCard(state = storageState)
             }
 
-            // S2.6 Network Section (Mocked until S5)
+            // S5 Network Section (Populated with real ConnectivityManager data)
             item {
                 NetworkCard(state = networkState)
             }
