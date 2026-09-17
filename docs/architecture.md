@@ -1,4 +1,4 @@
-﻿# Architecture Baseline — Aryntra Darpan
+# Architecture Baseline — Aryntra Darpan
 
 ## 1. Overview
 
@@ -82,3 +82,29 @@ Card composables receive immutable UI state instances rather than querying syste
 
 ### 5.3 Deferred System APIs
 All device, battery, storage, and network metrics are modeled synthetically for S2. Native Android system services (`Build`, `BatteryManager`, `StatFs`, `ConnectivityManager`) are strictly deferred to S3+.
+
+## 6. Sprint S3 Updates (Core Device & OS Inspection)
+
+Sprint S3 connects the first real Android platform data layer to the Compose UI:
+
+### 6.1 Provider Abstraction (device/DeviceInfoProvider.kt)
+- **Single Responsibility**: Gathers hardware identity and OS version properties from ndroid.os.Build and ndroid.os.Build.VERSION.
+- **Decoupling**: Compose UI components remain 100% pure and unaware of Android system classes, consuming only immutable DeviceUiState models.
+- **Resilience & Normalization**: Formats raw hardware strings (e.g. capitalized manufacturer names, fallback strings for blank or "unknown" values, SDK release and API integer pairing).
+
+### 6.2 Data Flow Pipeline
+```text
+Android SDK (Build.MODEL, Build.MANUFACTURER, Build.VERSION)
+       │
+       ▼
+DeviceInfoProvider.getDeviceInfo()
+       │
+       ▼
+DeviceUiState(deviceName, manufacturer, androidVersion)
+       │
+       ▼
+DarpanDashboard (Hoisted State)
+       │
+       ▼
+DeviceCard (Pure Material 3 Presentation)
+```
