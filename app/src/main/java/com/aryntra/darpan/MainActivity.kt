@@ -1,4 +1,4 @@
-﻿package com.aryntra.darpan
+package com.aryntra.darpan
 
 import android.os.Bundle
 import android.util.Log
@@ -11,16 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.aryntra.darpan.ui.DarpanDashboard
-
-/**
- * Domain model for point-in-time device observation snapshots.
- * Preserves the S1 foundational model.
- */
-data class DeviceSnapshot(
-    val timestamp: Long,
-    val sampleLabel: String?,
-    val sequenceNumber: Int
-)
 
 class MainActivity : ComponentActivity() {
     private val TAG = "DarpanLifecycle"
