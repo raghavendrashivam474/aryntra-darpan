@@ -1,4 +1,4 @@
-package com.aryntra.darpan.ui
+﻿package com.aryntra.darpan.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,30 +24,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aryntra.darpan.DeviceSnapshot
+import com.aryntra.darpan.battery.BatteryInfoProvider
 import com.aryntra.darpan.device.DeviceInfoProvider
+import com.aryntra.darpan.storage.StorageInfoProvider
 
 /**
- * S3 Darpan Dashboard: Primary structured dashboard surface.
- * Consumes native device state from [DeviceInfoProvider] while maintaining
- * pure UI state hoisting for card composables.
+ * S4 Darpan Dashboard: Primary structured dashboard surface.
+ * Consumes real native state from [DeviceInfoProvider], [BatteryInfoProvider],
+ * and [StorageInfoProvider] while maintaining pure UI state hoisting for card composables.
  */
 @Composable
 fun DarpanDashboard(
     modifier: Modifier = Modifier,
-    deviceInfoProvider: DeviceInfoProvider = remember { DeviceInfoProvider() }
+    deviceInfoProvider: DeviceInfoProvider = remember { DeviceInfoProvider() },
+    storageInfoProvider: StorageInfoProvider = remember { StorageInfoProvider() },
+    batteryInfoProvider: BatteryInfoProvider? = null
 ) {
+    val context = LocalContext.current.applicationContext
+    val resolvedBatteryProvider = remember(batteryInfoProvider, context) {
+        batteryInfoProvider ?: BatteryInfoProvider(context)
+    }
+
     var refreshSequence by remember { mutableIntStateOf(0) }
 
-    // S3: Real Device state populated from Android SDK Build APIs
+    // S3 & S4: Real native state populated from Android SDK APIs
     var deviceState by remember { mutableStateOf(deviceInfoProvider.getDeviceInfo()) }
+    var batteryState by remember { mutableStateOf(resolvedBatteryProvider.getBatteryInfo()) }
+    var storageState by remember { mutableStateOf(storageInfoProvider.getStorageInfo()) }
 
-    // S2 Mock states (scheduled for S4 & S5 real data transitions)
-    var batteryState by remember { mutableStateOf(BatteryUiState()) }
-    var storageState by remember { mutableStateOf(StorageUiState()) }
+    // S2 Mock state (scheduled for S5 real data transition)
     var networkState by remember { mutableStateOf(NetworkUiState()) }
 
     // Snapshot history state list
@@ -99,13 +109,10 @@ fun DarpanDashboard(
                         Button(
                             onClick = {
                                 refreshSequence++
-                                // Re-query native device state
+                                // Re-query native hardware & system states
                                 deviceState = deviceInfoProvider.getDeviceInfo()
-
-                                // Cycle mock states slightly to illustrate recomposition feedback
-                                val mockBatteryLevels = listOf(82, 81, 80, 83)
-                                val currentMockLevel = mockBatteryLevels[refreshSequence % mockBatteryLevels.size]
-                                batteryState = batteryState.copy(levelPercentage = currentMockLevel)
+                                batteryState = resolvedBatteryProvider.getBatteryInfo()
+                                storageState = storageInfoProvider.getStorageInfo()
 
                                 val newSnapshot = DeviceSnapshot(
                                     timestamp = System.currentTimeMillis(),
@@ -134,17 +141,17 @@ fun DarpanDashboard(
                 DeviceCard(state = deviceState)
             }
 
-            // S2.4 Battery Section
+            // S4 Battery Section (Populated with real Android BatteryManager data)
             item {
                 BatteryCard(state = batteryState)
             }
 
-            // S2.5 Storage Section
+            // S4 Storage Section (Populated with real StatFs data)
             item {
                 StorageCard(state = storageState)
             }
 
-            // S2.6 Network Section
+            // S2.6 Network Section (Mocked until S5)
             item {
                 NetworkCard(state = networkState)
             }
